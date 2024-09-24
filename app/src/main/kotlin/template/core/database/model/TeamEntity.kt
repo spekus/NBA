@@ -4,11 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "post"
+    tableName = "team"
 )
-data class PostEntity(
+data class TeamEntity(
     @PrimaryKey val id: Int,
-    val userId: Int,
-    val title: String,
-    val body: String
+    val fullName: String,
+    val conference: String,
+    val city: String,
 )

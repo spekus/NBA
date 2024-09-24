@@ -1,6 +1,5 @@
-package template.feature.postdetail
+package template.feature.nba.teamdetail
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -12,29 +11,37 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import template.core.model.Game
+import template.core.ui.preview.TeamDetailsPreviewParameterProvider
+import template.core.ui.preview.ThemePreviews
+import template.feature.nba.components.EmptyPlaceholder
+import template.feature.nba.components.GamesList
+import template.feature.nba.components.Loader
 
 @Composable
-fun PostDetailRoute(
-    viewModel: PostDetailViewModel = hiltViewModel(),
+fun TeamDetailRoute(
+    viewModel: TeamDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
-    val postId by viewModel.postId.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    PostDetailScreen(
-        postId = postId,
+    TeamDetailScreen(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
         onBackClick = onBackClick
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostDetailScreen(
-    postId: Int,
+fun TeamDetailScreen(
+    uiState: TeamDetailsUiState,
+    onEvent: (TeamDetailsUiEvent) -> Unit,
     onBackClick: () -> Unit
 ) {
     Column(
@@ -50,25 +57,31 @@ fun PostDetailScreen(
                 }
             },
             title = {
-                Text(text = "Post Detail")
+                Text(text = "Home")
             }
         )
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "Post ID: $postId"
+        if (uiState.isLoading) {
+            Loader()
+        } else if (uiState.games.isEmpty()) {
+            EmptyPlaceholder()
+        } else {
+            GamesList(
+                games = uiState.games,
+                onLoadMore = { onEvent(TeamDetailsUiEvent.LoadMore) }
             )
         }
     }
 }
 
 @Preview
+@ThemePreviews
 @Composable
-private fun PostDetailScreenPreview() {
-    PostDetailScreen(
-        postId = 1,
-        onBackClick = {}
+private fun PostDetailScreenPreview(
+    @PreviewParameter(TeamDetailsPreviewParameterProvider::class) state: List<Game>
+) {
+    TeamDetailScreen(
+        uiState = TeamDetailsUiState(games = state),
+        onBackClick = {},
+        onEvent = {}
     )
 }

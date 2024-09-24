@@ -7,13 +7,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
 import template.UserAuthState
 import template.feature.launch.LaunchRoute
 import template.feature.login.LoginRoute
-import template.feature.postdetail.PostDetailRoute
-import template.feature.posts.PostsRoute
+import template.feature.nba.players.PlayersRoute
+import template.feature.nba.teamdetail.TeamDetailRoute
+import template.feature.nba.teams.TeamsRoute
 
 @Serializable
 sealed class NavigationGraph {
@@ -21,7 +21,7 @@ sealed class NavigationGraph {
     data object Login : NavigationGraph()
 
     @Serializable
-    data object Posts : NavigationGraph()
+    data object Nba : NavigationGraph()
 }
 
 @Serializable
@@ -33,15 +33,13 @@ sealed class Screen {
     data object Login : Screen()
 
     @Serializable
-    data object Posts : Screen()
+    data object Teams : Screen()
 
     @Serializable
-    data class PostDetail(val postId: Int) : Screen() {
-        companion object {
-            const val POST_ID_ARG = "postId"
-            const val DEEPLINK_URI_PATTERN = "https://template.com/{$POST_ID_ARG}"
-        }
-    }
+    data object Players : Screen()
+
+    @Serializable
+    data class TeamDetails(val teamId: Int) : Screen()
 }
 
 @Suppress("LongMethod")
@@ -53,19 +51,7 @@ fun AppNavHost(
     val navController = rememberNavController()
 
     LaunchedEffect(userAuth) {
-        when (userAuth) {
-            UserAuthState.LoggedIn -> {
-                navController.navigate(NavigationGraph.Posts) { popUpTo(0) }
-            }
-
-            UserAuthState.LoggedOut -> {
-                navController.navigate(NavigationGraph.Login) { popUpTo(0) }
-            }
-
-            else -> {
-                navController.navigate(Screen.Launch) { popUpTo(0) }
-            }
-        }
+        navController.navigate(NavigationGraph.Nba) { popUpTo(0) }
     }
 
     AppDeeplinkConsumer(
@@ -92,24 +78,29 @@ fun AppNavHost(
             }
         }
 
-        navigation<NavigationGraph.Posts>(
-            startDestination = Screen.Posts,
+        navigation<NavigationGraph.Nba>(
+            startDestination = Screen.Teams,
         ) {
-            composable<Screen.Posts> {
-                PostsRoute(
+            composable<Screen.Teams> {
+                TeamsRoute(
                     onPostClick = { postId ->
-                        navController.navigate(Screen.PostDetail(postId = postId))
-                    }
+                        navController.navigate(Screen.TeamDetails(teamId = postId))
+                    },
+                    navController = navController
                 )
             }
-            composable<Screen.PostDetail>(
-                deepLinks = listOf(
-                    navDeepLink {
-                        uriPattern = Screen.PostDetail.DEEPLINK_URI_PATTERN
-                    }
-                ),
-            ) {
-                PostDetailRoute(onBackClick = navController::navigateUp)
+
+            composable<Screen.Players> {
+                PlayersRoute(
+                    onPlayerClick = { postId ->
+                        navController.navigate(Screen.TeamDetails(teamId = postId))
+                    },
+                    navController = navController
+                )
+            }
+
+            composable<Screen.TeamDetails> {
+                TeamDetailRoute(onBackClick = navController::navigateUp)
             }
         }
     }
