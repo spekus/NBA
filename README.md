@@ -7,11 +7,10 @@
   <details>
      
   <summary>Demo</summary>
-  
+
   Nba 
 - 
-  <video src="https://github.com/ch13mob/template/assets/15021133/4728b522-bd3f-48c9-8bc0-05d7d811a7f7" controls="controls" style="max-width: 730px;"></video>
+  [Screen_recording_20240924_111656.webm](https://github.com/user-attachments/assets/675d5ec4-de8e-4eb3-8a9d-9b02cec68e62)
   
-
   
 </details>
