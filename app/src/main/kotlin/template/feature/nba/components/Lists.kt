@@ -14,92 +14,49 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import template.core.model.Game
-import template.core.model.Player
-import template.core.model.Team
 import template.feature.nba.InfiniteListHandler
 
 @Composable
-fun TeamsList(
-    modifier: Modifier = Modifier, teams: List<Team>, onItemClick: (Int) -> Unit
-) {
-    Labels(listOf("Name", "City", "Conference"))
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        items(count = teams.size) { index ->
-            RowItem(columns = listOf(
-                teams[index].fullName, teams[index].city, teams[index].conference
-            ), onItemClick = { onItemClick(teams[index].id) })
-        }
-    }
-}
-
-@Composable
-fun PlayersList(
+fun ListWithHeader(
+    header: List<String>,
+    rows: List<RowItem>,
     modifier: Modifier = Modifier,
-    players: List<Player>,
-    onItemClick: (Int) -> Unit,
-    onLoadMore: () -> Unit
+    onLoadMore: (() -> Unit)? = null,
+    onItemClick: ((Int) -> Unit)? = null,
 ) {
     val listState = rememberLazyListState()
 
-    Labels(listOf("Fist Name", "Last Name", "Team"))
+    Header(labels = header)
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         state = listState
     ) {
-        items(count = players.size) { index ->
-            RowItem(columns = listOf(
-                players[index].firstName,
-                players[index].lastName,
-                players[index].team,
-            ), onItemClick = { onItemClick(players[index].teamId) })
+        items(count = rows.size) { index ->
+            rows[index].let {
+                RowItem(
+                    columns = it.titles,
+                    onItemClick = { onItemClick?.invoke(it.onItemClickId) }
+                )
+            }
         }
     }
 
-    InfiniteListHandler(listState = listState) {
-        onLoadMore()
-    }
-}
-
-@Composable
-fun GamesList(
-    modifier: Modifier = Modifier, games: List<Game>, onLoadMore: () -> Unit
-) {
-    val listState = rememberLazyListState()
-
-    Labels(listOf("Home Name", "Home Score", "Visitor Name", "Visitor Score"))
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        state = listState
-    ) {
-        items(count = games.size) { index ->
-            RowItem(
-                columns = listOf(
-                    games[index].homeTeam,
-                    games[index].homeScore,
-                    games[index].visitorTeam,
-                    games[index].visitorScore,
-                ),
-            )
+    onLoadMore?.let {
+        InfiniteListHandler(listState = listState) {
+            it()
         }
     }
-
-    InfiniteListHandler(listState = listState) {
-        onLoadMore()
-    }
 }
 
+data class RowItem(
+    val titles: List<String>,
+    val onItemClickId: Int,
+)
 
 @Composable
-fun Labels(labels: List<String>) {
+fun Header(labels: List<String>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

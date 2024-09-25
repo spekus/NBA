@@ -7,5 +7,5 @@ import template.core.network.model.TeamsDto
 interface NetworkDataSource {
     suspend fun getTeams(): TeamsDto
     suspend fun getGames(teamId: Int): GamesDto
-    suspend fun getPlayers(name: String): PlayersDto
+    suspend fun getPlayers(search: String): PlayersDto
 }

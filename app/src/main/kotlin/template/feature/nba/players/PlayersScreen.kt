@@ -23,12 +23,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import template.core.model.Player
+import template.core.model.toRow
 import template.core.ui.component.AppErrorSnackbar
 import template.core.ui.component.AppProgressIndicator
 import template.core.ui.preview.PlayersPreviewParameterProvider
 import template.core.ui.preview.ThemePreviews
 import template.feature.nba.components.EmptyPlaceholder
-import template.feature.nba.components.PlayersList
+import template.feature.nba.components.ListWithHeader
 import template.navigation.BottomNavBar
 import template.navigation.Screen
 
@@ -84,8 +85,9 @@ fun PlayersScreen(
         if (uiState.players.isEmpty()) {
             EmptyPlaceholder()
         } else {
-            PlayersList(
-                players = uiState.players,
+            ListWithHeader(
+                header = listOf("Fist Name", "Last Name", "Team"),
+                rows = uiState.players.toRow(),
                 onItemClick = onItemClick,
                 onLoadMore = { onEvent(PlayersUiEvent.LoadMore) },
             )

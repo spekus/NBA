@@ -25,12 +25,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import template.core.model.Team
+import template.core.model.toRow
 import template.core.ui.component.AppErrorSnackbar
 import template.core.ui.component.AppProgressIndicator
 import template.core.ui.preview.TeamsPreviewParameterProvider
 import template.core.ui.preview.ThemePreviews
 import template.feature.nba.components.EmptyPlaceholder
-import template.feature.nba.components.TeamsList
+import template.feature.nba.components.ListWithHeader
 import template.feature.nba.teams.component.TeamsDialog
 import template.navigation.BottomNavBar
 import template.navigation.Screen
@@ -108,8 +109,9 @@ fun TeamsScreen(
         if (uiState.teams.isEmpty()) {
             EmptyPlaceholder()
         } else {
-            TeamsList(
-                teams = uiState.teams,
+            ListWithHeader(
+                header = listOf("Name", "City", "Conference"),
+                rows = uiState.teams.toRow(),
                 onItemClick = onPostClick,
             )
         }

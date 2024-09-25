@@ -17,10 +17,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import template.core.model.Game
+import template.core.model.toRow
 import template.core.ui.preview.TeamDetailsPreviewParameterProvider
 import template.core.ui.preview.ThemePreviews
 import template.feature.nba.components.EmptyPlaceholder
-import template.feature.nba.components.GamesList
+import template.feature.nba.components.ListWithHeader
 import template.feature.nba.components.Loader
 
 @Composable
@@ -65,8 +66,9 @@ fun TeamDetailScreen(
         } else if (uiState.games.isEmpty()) {
             EmptyPlaceholder()
         } else {
-            GamesList(
-                games = uiState.games,
+            ListWithHeader(
+                header = listOf("Home Name", "Home Score", "Visitor Name", "Visitor Score"),
+                rows = uiState.games.toRow(),
                 onLoadMore = { onEvent(TeamDetailsUiEvent.LoadMore) }
             )
         }

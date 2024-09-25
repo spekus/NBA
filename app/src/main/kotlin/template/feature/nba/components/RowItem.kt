@@ -23,7 +23,7 @@ fun RowItem(
     onItemClick: () -> Unit = {},
 ) {
     Card(
-        onClick = { onItemClick() }  ,
+        onClick = { onItemClick() },
         shape = RoundedCornerShape(0.dp),
     ) {
         Row(
@@ -33,14 +33,16 @@ fun RowItem(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             columns.forEach { text ->
-                if(text.isNotBlank()) {
+                if (text.isNotBlank()) {
                     Text(
                         text = text,
                         style = style,
                         textAlign = TextAlign.Start,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f).padding(horizontal = 8.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 8.dp)
                     )
                 }
             }
